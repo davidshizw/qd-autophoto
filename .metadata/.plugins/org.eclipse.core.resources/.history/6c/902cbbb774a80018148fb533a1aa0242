@@ -1,0 +1,62 @@
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
+
+public class ControlPanel {
+	private static JFrame frame = new JFrame();
+	private static JLabel status = new JLabel("Status");
+	private static JPanel work_panel = new JPanel();
+	private static JPanel init_panel = new JPanel();
+	private static Datapath datapath = null;
+	
+	public ControlPanel()
+	{
+		init();
+		JPanel panel = (JPanel) frame.getContentPane();
+		panel.setBorder(new EmptyBorder(10,15,10,15));
+		frame.setPreferredSize(250,250);
+		frame.add(init_panel);
+	
+		frame.pack();
+		frame.setVisible(true);
+	}
+	
+	public void init()
+	{
+		JButton btn1 = new JButton("New");
+			btn1.addActionListener(e -> newProject());
+		init_panel.add(btn1);
+		JButton btn2 = new JButton("Load");
+			btn2.addActionListener(e -> loadProject());
+		init_panel.add(btn2);
+		
+	}
+	
+	public void newProject()
+	{
+		datapath = new Datapath();
+	}
+	
+	public void loadProject()
+	{
+		try {
+			JFileChooser fchooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory().getPath());
+			fchooser.setDialogTitle("ÇëÑ¡Ôñ»º´æÎÄ¼þ");
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("txt file","txt");
+			fchooser.setFileFilter(filter);
+			int returnVal = fchooser.showOpenDialog(null);
+			if(returnVal == JFileChooser.APPROVE_OPTION){
+				String path = fchooser.getSelectedFile().getPath();
+				datapath = new Datapath(path);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void main(String[] args)
+	{
+		ControlPanel c = new ControlPanel();
+	}
+}

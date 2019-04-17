@@ -1,0 +1,53 @@
+import java.io.File;
+import java.io.IOException;
+
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
+
+public class Control {
+	private static String PARENT_DIRECTORY_PATH;
+	private static String BACKUP_PATH;
+	private static String[] PHOTO_PATH_ARRAY;
+	private static StudentDB studentDB = new StudentDB();
+	
+	public static void setParentDirectory()
+	{
+		JFileChooser fchooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory().getPath());
+		fchooser.setDialogTitle("请选择目标工作文件夹");
+		fchooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int returnVal = fchooser.showOpenDialog(fchooser);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+			PARENT_DIRECTORY_PATH = fchooser.getSelectedFile().getAbsolutePath();
+			BACKUP_PATH = PARENT_DIRECTORY_PATH + "\\Record";
+				File recordDir = new File(BACKUP_PATH);
+				recordDir.mkdir();
+			PHOTO_PATH_ARRAY = new String[] {PARENT_DIRECTORY_PATH + "\\House A",PARENT_DIRECTORY_PATH + "\\House B",
+					 						 PARENT_DIRECTORY_PATH + "\\House C",PARENT_DIRECTORY_PATH + "\\House D",
+					 						 PARENT_DIRECTORY_PATH + "\\House E",PARENT_DIRECTORY_PATH + "\\House F"};
+				for(String path: PHOTO_PATH_ARRAY) {
+					File photoDir = new File(path);
+					photoDir.mkdir();
+				}
+		}
+	}
+	
+	public static void getStudentList() throws ColumnDismatchException, IOException
+	{
+		JFileChooser fchooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory().getPath());
+		fchooser.setDialogTitle("请选择学生名单");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("csv file","csv");
+		fchooser.setFileFilter(filter);
+		int returnVal = fchooser.showOpenDialog(null);
+		if(returnVal == JFileChooser.APPROVE_OPTION){
+			String path = fchooser.getSelectedFile().getPath();
+			importStudent(path);
+		}
+	}
+	
+	public static void main(String[] args) throws ColumnDismatchException, IOException
+	{
+		Control a = new Control();
+		a.getStudentList();
+	}
+}

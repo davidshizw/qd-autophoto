@@ -1,0 +1,54 @@
+import java.util.Date;
+import java.util.Calendar;
+
+public class Student
+{
+	private static int ENTRY_YEAR = Calendar.getInstance().get(Calendar.YEAR);
+	private String cName;
+	private String eName;
+	private Homeroom homeroom;
+	private int ID;
+	private boolean status;
+	
+	// new student
+	public Student(String cName,String eName,int ID,Homeroom homeroom)
+	{
+		this.cName = cName;
+		this.eName = eName;
+		this.homeroom = homeroom;
+		this.ID = ID;
+		status = false;
+	}
+	
+	// read from studentDB
+	public Student(String cName,String eName,int ID,Homeroom homeroom,boolean status)
+	{
+		this.cName = cName;
+		this.eName = eName;
+		this.homeroom = homeroom;
+		this.ID = ID;
+		this.status = status;
+	}
+	
+	public void setStatus(boolean status)
+	{
+		this.status = status;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return cName + "," + eName + "," + ID + "," + homeroom + "," + status;
+	}
+	
+	public String getFilename(String photo)
+	{
+		return photo + "|" + ENTRY_YEAR + homeroom + "|" + String.format("%02d",ID) + "|" + cName + "|" + eName + ".JPG";
+	}
+	
+	public static void main(String[] args)
+	{
+		Student a = new Student(" º÷’Œ¥","David",3,Homeroom.A);
+		System.out.println(a.getFilename("HY"));
+	}
+}

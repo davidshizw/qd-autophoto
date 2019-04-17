@@ -1,0 +1,108 @@
+import java.util.*;
+import java.io.*;
+
+public class StudentDB 
+{
+	private static ArrayList<Student> houseA = new ArrayList<Student>();
+	private static ArrayList<Student> houseB = new ArrayList<Student>();
+	private static ArrayList<Student> houseC = new ArrayList<Student>();
+	private static ArrayList<Student> houseD = new ArrayList<Student>();
+	private static ArrayList<Student> houseE = new ArrayList<Student>();
+	private static ArrayList<Student> houseF = new ArrayList<Student>();
+	private static ArrayList<Student> backup = new ArrayList<Student>();
+	
+	private static final int HOMEROOM_COLUMN = 0;
+	private static final int ID_COLUMN = 1;
+	private static final int CHINESE_NAME_COLUMN = 2;
+	private static final int ENGLISH_NAME_COLUMN = 5;
+	
+	public static void importStudent(String path) throws ColumnDismatchException,IOException
+	{
+		boolean stop = false;
+		do {
+			File f = new File(path);
+			Scanner sc = new Scanner(f);
+			while(sc.hasNextLine()) {
+				String[] arr = sc.nextLine().replace(" ","").split(",");
+				if(arr[HOMEROOM_COLUMN].length() == 1){
+					try {
+						int ID = Integer.parseInt(arr[ID_COLUMN].substring(arr[ID_COLUMN].length()-2));
+	                    Homeroom homeroom = getHomeroom(arr[HOMEROOM_COLUMN]);
+	                    Student student = new Student(arr[CHINESE_NAME_COLUMN],arr[ENGLISH_NAME_COLUMN],ID,homeroom,false);
+	                    System.out.println(student);
+	                    allocate(student,homeroom);
+	                    backup.add(student);
+					} catch(Exception e){
+						sc.close();
+	                    throw new ColumnDismatchException();
+	                }
+				}
+			}
+			sc.close();
+			stop = true;
+		} while(!stop);
+	}
+	
+	public static void loadBackup(String path) throws IOException
+	{
+		File f = new File(path+"\\studentDB_backup");
+		Scanner sc = new Scanner(f);
+		while(sc.hasNextLine()){
+            String[] arr = sc.nextLine().split(",");
+            Homeroom homeroom = getHomeroom(arr[3]);
+            Student student =  new Student(arr[0],arr[1],Integer.parseInt(arr[2]),homeroom,Boolean.parseBoolean(arr[4]));
+            allocate(student,homeroom);
+            backup.add(student);
+        }
+		sc.close();
+	}
+	
+	public static void saveBackup(String path) throws IOException
+	{
+		File f = new File(path+"\\studentDB_backup");
+		if(f.exists()) {
+			f.delete();
+		}
+		BufferedWriter writer = new BufferedWriter(new FileWriter(f,true));
+		for(Student student:backup) {
+			writer.append(student.toString());
+		}
+		writer.close();
+	}
+	
+	private static Homeroom getHomeroom(String homeroom)
+	{
+		homeroom = homeroom.toUpperCase();
+		if(homeroom.equals("A")) {
+			return Homeroom.A;
+		} else if(homeroom.equals("B")) {
+			return Homeroom.B;
+		} else if(homeroom.equals("C")) {
+			return Homeroom.C;
+		} else if(homeroom.equals("D")) {
+			return Homeroom.D;
+		} else if(homeroom.equals("E")) {
+			return Homeroom.E;
+		} else if(homeroom.equals("F")) {
+			return Homeroom.F;
+		}
+		return null;
+	}
+	
+	private static void allocate(Student student,Homeroom homeroom)
+	{
+		if(homeroom == Homeroom.A) {
+			houseA.add(student);
+		} else if(homeroom == Homeroom.B) {
+			houseB.add(student);
+		} else if(homeroom == Homeroom.C) {
+			houseC.add(student);
+		} else if(homeroom == Homeroom.D) {
+			houseD.add(student);
+		} else if(homeroom == Homeroom.E) {
+			houseE.add(student);
+		} else if(homeroom == Homeroom.F) {
+			houseF.add(student);
+		}
+	}
+}

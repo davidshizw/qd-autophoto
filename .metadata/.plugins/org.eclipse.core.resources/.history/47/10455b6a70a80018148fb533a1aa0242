@@ -1,0 +1,78 @@
+import java.io.*;
+import javax.swing.*;
+import javax.swing.filechooser.*;
+
+public class Datapath {
+	private static String PARENT_DIRECTORY_PATH;
+	private static String[] PHOTO_PATH_ARRAY;
+	private static StudentDB studentDB;
+	
+	public Datapath(String path)
+	{
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(path));
+			PARENT_DIRECTORY_PATH = br.readLine();
+			PHOTO_PATH_ARRAY = new String[6];
+			for(int i = 0; i < 6; i++) {
+				PHOTO_PATH_ARRAY[i] = br.readLine();
+			}
+			studentDB = new StudentDB();
+			boolean stop = false;
+			while(!stop) {
+				String s = br.readLine();
+				if(s == null) {
+					stop = true;
+				} else {
+					studentDB.loadStudent(s);
+				}
+			}
+			br.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public Datapath()
+	{
+		studentDB = new StudentDB();
+		if(setParentDirectory()) {
+			getStudentList();
+		}
+	}
+	
+	public void getStudentList()
+	{
+		try {
+			JFileChooser fchooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory().getPath());
+			fchooser.setDialogTitle("请选择学生名单");
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("csv file","csv");
+			fchooser.setFileFilter(filter);
+			int returnVal = fchooser.showOpenDialog(null);
+			if(returnVal == JFileChooser.APPROVE_OPTION){
+				String path = fchooser.getSelectedFile().getPath();
+				studentDB.importStudent(path);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void save()
+	{
+		try {
+			File f = new File(PARENT_DIRECTORY_PATH + File.separatorChar + "IMPORTANT_DATA_DO_NOT_DELETE.txt");
+			if(f.exists()) {
+				f.delete();
+			}
+			BufferedWriter writer = new BufferedWriter(new FileWriter(f,true));
+			writer.append(PARENT_DIRECTORY_PATH+"\n");
+			for(String s: PHOTO_PATH_ARRAY) {
+				writer.append(s+"\n");
+			}
+			writer.close();
+			studentDB.saveBackup(f);
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+}

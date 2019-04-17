@@ -1,0 +1,35 @@
+import java.io.File;
+
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileSystemView;
+
+public class Control {
+	private static String PARENT_DIRECTORY_PATH;
+	private static String BACKUP_PATH;
+	private static String[] PHOTO_PATH_ARRAY;
+	
+	public Control()
+	{
+		JFileChooser fchooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory().getPath());
+		fchooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		if(fchooser.showOpenDialog(fchooser) == JFileChooser.APPROVE_OPTION) {
+			PARENT_DIRECTORY_PATH = fchooser.getSelectedFile().getAbsolutePath();
+			BACKUP_PATH = PARENT_DIRECTORY_PATH + "\\Record";
+				File recordDir = new File(BACKUP_PATH);
+				recordDir.mkdir();
+			PHOTO_PATH_ARRAY = new String[] {PARENT_DIRECTORY_PATH + "\\House A",PARENT_DIRECTORY_PATH + "\\House B",
+					 						 PARENT_DIRECTORY_PATH + "\\House C",PARENT_DIRECTORY_PATH + "\\House D",
+					 						 PARENT_DIRECTORY_PATH + "\\House E",PARENT_DIRECTORY_PATH + "\\House F"};
+				for(String path: PHOTO_PATH_ARRAY) {
+					File photoDir = new File(path);
+					photoDir.mkdir();
+				}
+			
+		}
+	}
+	
+	public static void main(String[] args)
+	{
+		Control a = new Control();
+	}
+}
